@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCRIBE BOT — AI YouTube Video Assistant</title>
+    <!-- Google Fonts: Roboto & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Marked.js for Rendering Markdown in Responses -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="yt-dark-theme">
+
+    <!-- Top YouTube Navbar -->
+    <header class="yt-header">
+        <div class="yt-header-left">
+            <div class="yt-brand">
+                <div class="yt-logo-box">
+                    <i class="fa-brands fa-youtube yt-red-icon"></i>
+                </div>
+                <span class="yt-title">SCRIBE <span class="yt-badge-rag">BOT</span></span>
+            </div>
+        </div>
+
+
+        <div class="yt-header-center">
+            <div class="yt-search-bar-container">
+                <div class="yt-input-wrapper">
+                    <i class="fa-solid fa-link yt-link-icon"></i>
+                    <input type="text" id="ytUrlInput" placeholder="Paste YouTube Video URL (e.g. https://www.youtube.com/watch?v=...)" autocomplete="off">
+                </div>
+                <button id="indexBtn" class="yt-search-btn" title="Index Video">
+                    Index Video <i class="fa-solid fa-arrow-right"></i>
+                </button>
+
+            </div>
+        </div>
+
+        <div class="yt-header-right">
+            <div id="statusBadge" class="status-pill status-idle">
+                <span class="status-dot"></span>
+                <span id="statusText">Ready to Index</span>
+            </div>
+            <div class="user-avatar" title="@Arijit Dutta">
+                <span class="avatar-initials">AD</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="yt-main-layout">
+
+        <!-- Left Video & Summary Column -->
+        <section class="yt-video-column">
+            
+            <!-- YouTube Video Embed Container -->
+            <div class="video-player-wrapper">
+                <div id="videoPlaceholder" class="video-placeholder">
+                    <div class="placeholder-content">
+                        <div class="play-circle">
+                            <i class="fa-brands fa-youtube"></i>
+                        </div>
+                        <h3>No Video Loaded</h3>
+                        <p>Paste a YouTube video URL above and click <strong>Index Video</strong> to watch & interact.</p>
+                    </div>
+                </div>
+                <iframe id="ytPlayer" class="yt-iframe-player hidden" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+
+            <!-- Video Metadata & Status Bar -->
+            <div class="video-meta-card">
+                <div class="meta-header">
+                    <h2 id="videoTitle" class="video-title">YouTube Video Q&A Assistant</h2>
+                    <span id="indexStatusTag" class="badge-tag">Awaiting Link</span>
+                </div>
+            </div>
+
+
+            <!-- AI Video Summary Card -->
+            <div class="summary-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fa-solid fa-wand-magic-sparkles text-accent"></i>
+                        <h3>AI Video Summary</h3>
+                    </div>
+                    <button id="copySummaryBtn" class="yt-icon-btn hidden" title="Copy Summary">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="summaryContent" class="markdown-body">
+                        <p class="summary-placeholder-text">Submit a YouTube video URL to generate an automated summary and index context for Q&A.</p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Right Q&A Chat Column -->
+        <section class="yt-chat-column">
+            <div class="chat-card">
+                <div class="chat-header">
+                    <div class="chat-title">
+                        <i class="fa-solid fa-comments text-accent"></i>
+                        <h3>Live Transcript Chat</h3>
+                    </div>
+                    <div class="chat-header-actions">
+                        <button id="clearChatBtn" class="yt-text-btn" title="Clear Chat History">
+                            <i class="fa-solid fa-rotate-left"></i> Clear
+                        </button>
+                        <button id="toggleChatBtn" class="chat-toggle-btn" title="Collapse Chat Panel">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+
+                <!-- Quick Suggestion Chips -->
+                <div class="prompt-chips">
+                    <button class="chip" data-prompt="Summarize the key points of this video.">📌 Key Points</button>
+                    <button class="chip" data-prompt="What code or technical implementation was shown?">💻 Code Examples</button>
+                    <button class="chip" data-prompt="What is the final conclusion of the video?">🎯 Conclusion</button>
+                </div>
+
+                <!-- Chat History Scroll Window -->
+                <div id="chatHistory" class="chat-messages-container">
+                    <div class="system-welcome-msg">
+                        <div class="bot-icon">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <div class="welcome-text">
+                            <h4>Welcome to SCRIBE BOT!</h4>
+                            <p>Enter any YouTube video link to ask questions, pull code snippets, or extract transcripts in real-time.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input Controls -->
+                <div class="chat-input-area">
+                    <div class="input-pill-box">
+                        <input type="text" id="questionInput" placeholder="Ask anything about the video..." autocomplete="off">
+                        <button id="sendBtn" class="send-btn" title="Send Question">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Floating Expand Chat Button (When Collapsed) -->
+    <button id="expandChatBtn" class="expand-chat-floating-btn hidden" title="Expand Chat Panel">
+        <i class="fa-solid fa-comments"></i> <span>Open Chat</span> <i class="fa-solid fa-chevron-left"></i>
+    </button>
+
+
+    <!-- Footer -->
+    <footer class="yt-footer">
+        <p>© 2026 SCRIBE BOT • Created & Maintained by <strong>@Arijit Dutta</strong></p>
+    </footer>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

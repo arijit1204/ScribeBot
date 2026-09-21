@@ -1,0 +1,73 @@
+# ==========================================
+# SCRIBE BOT — Comprehensive .gitignore
+# ==========================================
+
+# 1. Environment & Local Secrets (CRITICAL - DO NOT REMOVE)
+.env
+.env.*
+!.env.example
+
+# 2. Python & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 3. Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# 4. Local Vector Databases, Cache & Data Storage
+data/*
+!data/.gitkeep
+data/chroma_db/
+data/transcript_cache/
+*.sqlite
+*.db
+*.chroma
+
+# 5. IDEs & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+
+# 6. Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 7. Temporary & Log Files
+*.log
+logs/
+.gradio/
+tmp/
+scratch/
